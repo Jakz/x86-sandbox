@@ -13,6 +13,7 @@
 		049707BD1C0D32F20000AC9F /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 049707BB1C0D32F20000AC9F /* memory.cpp */; };
 		04BCDA581C0C91F400A113DD /* ui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04BCDA561C0C91F400A113DD /* ui.cpp */; };
 		04C4AC321C0A0C2800C0654C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04C4AC311C0A0C2800C0654C /* main.cpp */; };
+		04FD00301C0DED81002E7F11 /* opcodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04FD002F1C0DED81002E7F11 /* opcodes.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,6 +44,7 @@
 		04BCDA571C0C91F400A113DD /* ui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui.h; sourceTree = "<group>"; };
 		04C4AC311C0A0C2800C0654C /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = "<group>"; };
 		04EA144A1C08C2C700BA9B7B /* X86Sim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = X86Sim; sourceTree = BUILT_PRODUCTS_DIR; };
+		04FD002F1C0DED81002E7F11 /* opcodes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opcodes.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				049707B41C0D32300000AC9F /* instructions.cpp */,
 				049707B51C0D32300000AC9F /* instructions.h */,
 				049707AF1C0D22440000AC9F /* registers.h */,
+				04FD002F1C0DED81002E7F11 /* opcodes.cpp */,
 				049707AE1C0D22320000AC9F /* opcodes.h */,
 			);
 			name = x86;
@@ -184,6 +187,7 @@
 				04C4AC321C0A0C2800C0654C /* main.cpp in Sources */,
 				049707BD1C0D32F20000AC9F /* memory.cpp in Sources */,
 				049707B61C0D32300000AC9F /* instructions.cpp in Sources */,
+				04FD00301C0DED81002E7F11 /* opcodes.cpp in Sources */,
 				049707B91C0D32E90000AC9F /* cpu.cpp in Sources */,
 				04BCDA581C0C91F400A113DD /* ui.cpp in Sources */,
 			);

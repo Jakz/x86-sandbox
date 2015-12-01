@@ -13,6 +13,7 @@ private:
   
 protected:
   void setLength(size_t i) { length = i; }
+  void increaseLength(size_t i) { length += i; }
   
 public:
   Instruction(size_t length = 1) : length(length) { }

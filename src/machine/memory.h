@@ -13,6 +13,7 @@ public:
   Memory(size_t size) : data(new u8[size]) { }
   ~Memory() { delete [] data; }
   
+  template<typename T> T& get(u64 address) { return *reinterpret_cast<T*>(&data[address]); }
   template<typename T> T read(u64 address) const { return *reinterpret_cast<T*>(&data[address]);  }
 
   u8 read8(u64 address) const;

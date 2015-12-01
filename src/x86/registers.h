@@ -78,7 +78,9 @@ enum RegIndex : u8
   AH = 0b100, SP = AH, ESP = AH,
   CH = 0b101, BP = CH, EBP = CH,
   DH = 0b110, SI = DH, ESI = DH,
-  BH = 0b111, DI = BH, EDI = BH
+  BH = 0b111, DI = BH, EDI = BH,
+  
+  REG_NONE = 0xff
 };
 
 struct Registers
@@ -112,6 +114,8 @@ public:
     _gs.r16 = 0LL;
     
   }
+  
+  RegisterFlags& flags() { return _flags; }
   
   reg8& ah() { return _a.r8h; }
   reg8& al() { return _a.r8l; }
@@ -230,3 +234,8 @@ template<> inline reg32& Registers::getReg(u8 reg) { return getReg32(reg); }
 static const char* RegNames8[] = { "AL", "CL", "DL", "BL", "AH", "CH", "DH", "BH" };
 static const char* RegNames16[] = { "AX", "CX", "DX", "BX", "SP", "BP", "SI", "DI" };
 static const char* RegNames32[] = { "EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI", "EDI" };
+
+template<typename T> inline const char* registerMnemonic(u8 reg) { return nullptr; }
+template<> inline const char* registerMnemonic<reg8>(u8 reg) { return RegNames8[reg]; }
+template<> inline const char* registerMnemonic<reg16>(u8 reg) { return RegNames16[reg]; }
+template<> inline const char* registerMnemonic<reg32>(u8 reg) { return RegNames32[reg]; }

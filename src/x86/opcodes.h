@@ -46,3 +46,29 @@ public:
     return fmt::sprintf("%s + %s*%u", RegNames32[base], RegNames32[index], 1<<static_cast<std::underlying_type<Scale>::type>(this->scale));
   }
 };
+
+template<typename Reg, typename Addr>
+class ModRMByte
+{
+private:
+  union
+  {
+    struct
+    {
+      u8 rm : 3;
+      u8 reg : 3;
+      u8 mod : 2;
+    };
+    u8 value;
+  };
+  
+public:
+  ModRMByte(u8 value) : value(value) { }
+  
+  size_t displacementLength() const;
+  std::string mnemonicRM();
+  std::string mnemonicReg();
+  
+  Reg& getRMValue(Machine& machine, Addr displacement);
+  Reg& getReg(Machine& machine);
+};
