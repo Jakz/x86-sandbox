@@ -141,14 +141,14 @@ public:
 std::unique_ptr<Instruction> Decoder::decode(Machine& machine)
 {
   CPU* cpu = machine.cpu;
-  CPU::Mode mode = cpu->getMode();
+  Mode mode = cpu->getMode();
   
   u8 opcode = cpu->fetch<u8>();
   
   // operand size prefix
   if (opcode == OP_PREFIX_OPERAND)
   {
-    mode = mode == CPU::Mode::BITS16 ? CPU::Mode::BITS32 : CPU::Mode::BITS16;
+    mode = mode == Mode::BITS16 ? Mode::BITS32 : Mode::BITS16;
     opcode = cpu->fetch<u8>();
   }
 
@@ -161,7 +161,7 @@ std::unique_ptr<Instruction> Decoder::decode(Machine& machine)
   // mov r16/32, imm16/32
   else if ((opcode & ~0x07) == OP_MOV_IMM1632)
   {
-    if (mode == CPU::Mode::BITS16)
+    if (mode == Mode::BITS16)
     {
       u16 imm = machine.cpu->fetch<u16>();
       return make_unique<MovImmediateR<reg16>>(machine, opcode, imm);

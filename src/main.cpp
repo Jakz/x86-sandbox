@@ -19,6 +19,8 @@
 
 #include "ui/ui.h"
 
+#include "assembler/assembler.h"
+
 using namespace std;
 
 int main(int argc, const char * argv[])
@@ -39,6 +41,17 @@ int main(int argc, const char * argv[])
   
   std::vector<u8> code2 = {0x88,0x37,0x88,0x57,0x01};
   memory->copy(code.size(), code2);
+  
+  assembler::Assembler assembler;
+  assembler.parseString(
+                        "nop\n"
+                        "mov al, 0x800\n"
+                        "mov bh, 0xFF\n"
+                        "mov bx, 0x1234\n"
+                        "mov ebx, 0x12345678\n");
+  
+  assembler.printCode();
+  assembler.save("/Users/Jack/Documents/Dev/asm/foo");
   
   
   /*auto i = decoder.decode(machine);

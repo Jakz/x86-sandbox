@@ -4,15 +4,17 @@
 #include "registers.h"
 #include "machine/memory.h"
 
+enum class Mode
+{
+  BITS16,
+  BITS32,
+  BITS64
+};
+
 class CPU
 {
 public:
-  enum class Mode
-  {
-    BITS16,
-    BITS32,
-    BITS64
-  };
+
   
 private:
   Memory* mem;

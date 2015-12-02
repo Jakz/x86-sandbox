@@ -12,6 +12,17 @@
 %code requires {
   
   #include "common.h"
+  #include "x86/registers.h"
+  
+  enum class Mode;
+  
+  struct RegReference
+  {
+    RegIndex reg;
+    Mode mode;
+    
+    bool is16Bits() const;
+  };
 
   namespace assembler
   {
@@ -38,11 +49,17 @@
   #include "assembler.h"
   #include "x86lexer.h"
   #include "x86parser.hpp"
+  #include "x86/opcodes.h"
   
   static assembler::Parser::symbol_type yylex(assembler::Lexer &scanner, assembler::Assembler &assembler) {
     return scanner.get_next_token();
   }
   
+
+  
+  bool RegReference::is16Bits() const { return mode == Mode::BITS16; }
+
+
   using namespace assembler;
 }
 
@@ -102,12 +119,22 @@
   ELIF "elif"
 
   VOID_TYPE "void_type"
+
+  MOV "mov"
 ;
 
 %token <std::string>
   IDENTIFIER "identifier"
   LITERAL "string literal"
 ;
+
+%token <RegIndex> REG8 "reg8"
+%token <RegIndex> REG16 "reg16"
+%token <RegIndex> REG32 "reg32"
+
+%type <RegReference> reg16or32 "reg16or32"
+
+%token <u8> OP8 "opcode8"
 
 %token <u32> U32 "integer";
 %token <float> FLOAT "float";
@@ -134,6 +161,7 @@
 %printer { yyoutput << ""; } <std::list<Expression*>>
 %printer { yyoutput << ""; } <std::list<Statement*>>*/
 %printer { yyoutput << $$; } <*>
+%printer { yyoutput << $$.reg << (u8)$$.mode ; } <RegReference>
 
 
 %nonassoc ELIF
@@ -157,7 +185,39 @@
 %%
 
 start:
-  EOL {  }
+  instructions
+;
+
+instructions:
+| instructions instruction { }
+| instructions EOL { }
+;
+
+instruction:
+  OP8 { assembler.emit($1); }
+| MOV REG8 COMMA U32 {
+    if ($4 > 0xFF || $4 < (s32)0xFF)
+      assembler.warning(@1, "byte value exceed bounds");
+    
+    assembler.emit(OP_MOV_IMM8|$2);
+    assembler.emitValue<u8>($4);
+}
+| MOV reg16or32 COMMA U32 {
+    if ($2.mode == Mode::BITS16 && ($4 > 0xFFFF || $4 < (s32)0xFFFF))
+      assembler.warning(@1, "word value exceed bounds");
+      
+    assembler.emitOperandPrefix($2.mode);
+    assembler.emit(OP_MOV_IMM1632|$2.reg);
+    if ($2.is16Bits())
+      assembler.emitValue<u16>($4);
+    else
+      assembler.emitValue<u32>($4);
+}
+;
+
+reg16or32:
+  REG16 { $$ = {$1, Mode::BITS16}; }
+| REG32 { $$ = {$1, Mode::BITS32}; }
 ;
 
 %%

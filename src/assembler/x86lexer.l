@@ -2,6 +2,7 @@
 	#include "x86parser.hpp"
   #include "x86lexer.h"
   #include "assembler.h"
+  #include "x86/opcodes.h"
   #include <string>
   
   typedef assembler::Parser::token token;
@@ -96,6 +97,32 @@
 "for" { return Parser::make_FOR(loc); }
 
 "void" { return Parser::make_VOID_TYPE(loc); }
+
+"al"|"AL" { return Parser::make_REG8(AL, loc); }
+"ah"|"AH" { return Parser::make_REG8(AH, loc); }
+"ax"|"AX" { return Parser::make_REG16(AX, loc); }
+"eax"|"EAX" { return Parser::make_REG32(EAX, loc); }
+
+"bl"|"BL" { return Parser::make_REG8(BL, loc); }
+"bh"|"BH" { return Parser::make_REG8(BH, loc); }
+"bx"|"BX" { return Parser::make_REG16(BX, loc); }
+"ebx"|"EBX" { return Parser::make_REG32(EBX, loc); }
+
+"cl"|"CL" { return Parser::make_REG8(CL, loc); }
+"ch"|"CH" { return Parser::make_REG8(CH, loc); }
+"cx"|"CX" { return Parser::make_REG16(CX, loc); }
+"ecx"|"ECX" { return Parser::make_REG32(ECX, loc); }
+
+"dl"|"DL" { return Parser::make_REG8(DL, loc); }
+"dh"|"DH" { return Parser::make_REG8(DH, loc); }
+"dx"|"DX" { return Parser::make_REG16(DX, loc); }
+"edx"|"EDX" { return Parser::make_REG32(EDX, loc); }
+
+
+
+"AAA"|"aaa" { return Parser::make_OP8(OP_AAA, loc); }
+"NOP"|"nop" { return Parser::make_OP8(OP_NOP, loc); }
+"MOV"|"mov" { return Parser::make_MOV(loc); }
 
 
 "0x"[a-fA-F0-9]+ { return Parser::make_U32(strtol( &yytext[2], NULL, 16), loc); }
