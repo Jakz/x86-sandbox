@@ -1,2 +1,9 @@
 xcshareddata
 xcuserdata
+location.hh
+position.hh
+stack.hh
+x86lexer.cpp
+x86parser.cpp
+x86parser.hpp
+x86parser.output

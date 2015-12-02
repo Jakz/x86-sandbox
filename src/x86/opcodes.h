@@ -5,6 +5,26 @@
 #include "registers.h"
 #include "common/format.h"
 
+enum Opcodes : u8
+{
+  OP_PREFIX_OPERAND = 0x66,
+  OP_PREFIX_ADDRESS = 0x67,
+  
+  OP_AAA = 0x37,
+
+  OP_MOV_IMM8 = 0xB0,
+  OP_MOV_IMM1632 = 0xB8,
+  OP_MOV_REG_RM = 0x88,
+
+  OP_NOP = 0x90,
+};
+
+enum OpMods : u8
+{
+  OP_WIDTH_BIT = 0x01,
+  OP_DIRECTION_BIT = 0x02
+};
+
 class SIBByte
 {
 public:

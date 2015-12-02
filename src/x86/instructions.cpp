@@ -25,7 +25,7 @@ protected:
   Addr displacement;
   bool sourceIsReg;
   std::string name;
-  RMInstruction(size_t length, const std::string& name, u8 opcode, u8 rmByte) : Instruction(length), name(name), modRm(rmByte), sourceIsReg(!(opcode & 0x02))
+  RMInstruction(size_t length, const std::string& name, u8 opcode, u8 rmByte) : Instruction(length), name(name), modRm(rmByte), sourceIsReg(!(opcode & OP_DIRECTION_BIT))
   {
     increaseLength(modRm.displacementLength());
   }
@@ -146,20 +146,20 @@ std::unique_ptr<Instruction> Decoder::decode(Machine& machine)
   u8 opcode = cpu->fetch<u8>();
   
   // operand size prefix
-  if (opcode == 0x66)
+  if (opcode == OP_PREFIX_OPERAND)
   {
     mode = mode == CPU::Mode::BITS16 ? CPU::Mode::BITS32 : CPU::Mode::BITS16;
     opcode = cpu->fetch<u8>();
   }
 
   // mov r8, imm8
-  if ((opcode & ~0x07) == 0xB0)
+  if ((opcode & ~0x07) == OP_MOV_IMM8)
   {
     u8 imm = machine.cpu->fetch<u8>();
     return make_unique<MovImmediateR<reg8>>(machine, opcode, imm);
   }
   // mov r16/32, imm16/32
-  else if ((opcode & ~0x07) == 0xB8)
+  else if ((opcode & ~0x07) == OP_MOV_IMM1632)
   {
     if (mode == CPU::Mode::BITS16)
     {
@@ -174,9 +174,9 @@ std::unique_ptr<Instruction> Decoder::decode(Machine& machine)
   }
   // mov r8/16/32, rm8/16/32
   // mov rm8/16/32, r8/16/32
-  else if ((opcode & ~0x03) == 0x88)
+  else if ((opcode & ~0x03) == OP_MOV_REG_RM)
   {
-    bool is8bit = !(opcode & 0x01);
+    bool is8bit = !(opcode & OP_WIDTH_BIT);
     
     if (is8bit)
     {
@@ -209,12 +209,12 @@ std::unique_ptr<Instruction> Decoder::decode(Machine& machine)
   }
   
   // AAA
-  else if (opcode == 0x37)
+  else if (opcode == OP_AAA)
   {
     return make_unique<AAA>();
   }
   // NOP
-  else if (opcode == 0x90)
+  else if (opcode == OP_NOP)
   {
     return make_unique<NOP>();
   }

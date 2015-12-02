@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
   CPU* cpu = new CPU(memory);
   Machine machine = { memory, cpu };
   Decoder decoder;
-
+  
   /*
    mov eax, 1234h
    mov cl, 80h
@@ -41,12 +41,12 @@ int main(int argc, const char * argv[])
   memory->copy(code.size(), code2);
   
   
-  auto i = decoder.decode(machine);
+  /*auto i = decoder.decode(machine);
   while (i) {
     i->execute(machine);
     cout << "Executed " << i->mnemonic() << endl;
     i = decoder.decode(machine);
-  }
+  }*/
   
   return 0;
 }

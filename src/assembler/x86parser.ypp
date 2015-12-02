@@ -1,0 +1,168 @@
+%skeleton "lalr1.cc"
+%require "3.0.2"
+
+%defines
+%define api.namespace {assembler}
+%define parser_class_name {Parser}
+
+%define api.token.constructor
+%define api.value.type variant
+%define parse.assert true
+
+%code requires {
+  
+  #include "common.h"
+
+  namespace assembler
+  {
+    class Assembler;
+    class Lexer;
+  }
+}
+
+%lex-param { assembler::Lexer &lexer }
+%lex-param { assembler::Assembler &assembler }
+%parse-param { assembler::Lexer &lexer }
+%parse-param { assembler::Assembler &assembler }
+
+%locations
+%initial-action
+{
+  @$.begin.filename = @$.end.filename = &assembler.file;
+};
+
+%define parse.trace
+%define parse.error verbose
+
+%code top {
+  #include "assembler.h"
+  #include "x86lexer.h"
+  #include "x86parser.hpp"
+  
+  static assembler::Parser::symbol_type yylex(assembler::Lexer &scanner, assembler::Assembler &assembler) {
+    return scanner.get_next_token();
+  }
+  
+  using namespace assembler;
+}
+
+%define api.token.prefix {T_}
+%token
+  END 0 "end of file"
+  EOL "\n"
+  COLON ":"
+  COMMA ","
+  SEMICOL ";"
+  LPAREN "("
+  RPAREN ")"
+  QUOTE "\""
+  RBRACK "["
+  LBRACK "]"
+  LBRACE "{"
+  RBRACE "}"
+  QUESTION "?"
+
+  ASSIGN "="
+  ASSIGN_PLUS "+="
+  ASSIGN_MINUS "-="
+  ASSIGN_TIMES "*="
+  ASSIGN_DIV "/="
+  ASSIGN_MOD "%="
+  ASSIGN_LAND "&&="
+  ASSIGN_LOR "||="
+
+  LESS "<"
+  LESSEQ "<="
+  GREATER ">"
+  GREATEREQ ">="
+  EQUAL "=="
+  NEQUAL "!="
+
+  PLUS "+"
+  MINUS "-"
+  TIMES "*"
+  DIV "/"
+  MOD "%"
+
+  INCR "++"
+  DECR "--"
+
+  LAND "&&"
+  LOR "||"
+
+  RANGE ".."
+  FIELD "->"
+
+  VAR "var"
+
+  WHILE "while"
+  FOR "for"
+  IF "if"
+  ELSE "else"
+  ELIF "elif"
+
+  VOID_TYPE "void_type"
+;
+
+%token <std::string>
+  IDENTIFIER "identifier"
+  LITERAL "string literal"
+;
+
+%token <u32> U32 "integer";
+%token <float> FLOAT "float";
+%token <bool> BOOL "bool";
+
+/*%type<Expression*> value number
+%type<Expression*> expression
+%type<Statement*> statement body assignment
+%type<Statement*> for_initializer for_iteration
+%type<Statement*> variable_declaration
+%type<FunDeclaration*> function_declaration
+
+%type<std::list<std::pair<std::string, std::string>>> signature_arguments optional_signature_arguments
+
+%type<std::string> assign_operator
+
+%type<std::list<Expression*>> optional_expression_list expression_list
+
+%type<std::list<Statement*>> statement_list for_statement
+%type<std::list<If*>> if_statement
+
+%printer { yyoutput << ""; } <std::list<std::pair<std::string, std::string>>>
+%printer { yyoutput << ""; } <std::list<If*>>
+%printer { yyoutput << ""; } <std::list<Expression*>>
+%printer { yyoutput << ""; } <std::list<Statement*>>*/
+%printer { yyoutput << $$; } <*>
+
+
+%nonassoc ELIF
+%nonassoc ELSE
+
+//%right QUESTION
+//%nonassoc BANG
+//%left AND
+//%left XOR
+//%left OR
+%left LOR
+%left LAND
+
+%left LESS LESSEQ GREATER GREATEREQ
+%left EQUAL NEQUAL
+//%left COMP
+%left PLUS MINUS
+%left TIMES DIV MOD
+//%right UMINUS
+
+%%
+
+start:
+  EOL {  }
+;
+
+%%
+
+void assembler::Parser::error(const location_type& l, const std::string& m)
+{
+  assembler.error(l,m);
+}

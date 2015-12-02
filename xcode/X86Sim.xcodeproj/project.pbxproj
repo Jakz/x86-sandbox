@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043F81AF1C0E9FBA000B8EB0 /* x86parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043F81A91C0E9FBA000B8EB0 /* x86parser.cpp */; };
+		043F81B21C0EA1F6000B8EB0 /* x86lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043F81B11C0EA1F6000B8EB0 /* x86lexer.cpp */; settings = {COMPILER_FLAGS = "-Wno-shorten-64-to-32"; }; };
+		043F81B51C0EA2C0000B8EB0 /* assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043F81B31C0EA2C0000B8EB0 /* assembler.cpp */; };
 		049707B31C0D2B890000AC9F /* format.cc in Sources */ = {isa = PBXBuildFile; fileRef = 049707B11C0D2B890000AC9F /* format.cc */; };
 		049707B61C0D32300000AC9F /* instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 049707B41C0D32300000AC9F /* instructions.cpp */; };
 		049707B91C0D32E90000AC9F /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 049707B71C0D32E90000AC9F /* cpu.cpp */; };
@@ -29,6 +32,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		043F81A71C0E9FBA000B8EB0 /* x86lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x86lexer.h; sourceTree = "<group>"; };
+		043F81A81C0E9FBA000B8EB0 /* x86lexer.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; path = x86lexer.l; sourceTree = "<group>"; };
+		043F81A91C0E9FBA000B8EB0 /* x86parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = x86parser.cpp; sourceTree = "<group>"; };
+		043F81AA1C0E9FBA000B8EB0 /* x86parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = x86parser.hpp; sourceTree = "<group>"; };
+		043F81AC1C0E9FBA000B8EB0 /* x86parser.ypp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = x86parser.ypp; sourceTree = "<group>"; };
+		043F81B11C0EA1F6000B8EB0 /* x86lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = x86lexer.cpp; sourceTree = "<group>"; };
+		043F81B31C0EA2C0000B8EB0 /* assembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = assembler.cpp; sourceTree = "<group>"; };
+		043F81B41C0EA2C0000B8EB0 /* assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assembler.h; sourceTree = "<group>"; };
 		049707AC1C0D21DD0000AC9F /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../src/common.h; sourceTree = "<group>"; };
 		049707AE1C0D22320000AC9F /* opcodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opcodes.h; sourceTree = "<group>"; };
 		049707AF1C0D22440000AC9F /* registers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = registers.h; sourceTree = "<group>"; };
@@ -58,6 +69,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		043F81A11C0E9FBA000B8EB0 /* assembler */ = {
+			isa = PBXGroup;
+			children = (
+				043F81B31C0EA2C0000B8EB0 /* assembler.cpp */,
+				043F81B41C0EA2C0000B8EB0 /* assembler.h */,
+				043F81B11C0EA1F6000B8EB0 /* x86lexer.cpp */,
+				043F81A71C0E9FBA000B8EB0 /* x86lexer.h */,
+				043F81A81C0E9FBA000B8EB0 /* x86lexer.l */,
+				043F81A91C0E9FBA000B8EB0 /* x86parser.cpp */,
+				043F81AA1C0E9FBA000B8EB0 /* x86parser.hpp */,
+				043F81AC1C0E9FBA000B8EB0 /* x86parser.ypp */,
+			);
+			name = assembler;
+			path = ../src/assembler;
+			sourceTree = "<group>";
+		};
 		049707AD1C0D22320000AC9F /* x86 */ = {
 			isa = PBXGroup;
 			children = (
@@ -106,6 +133,7 @@
 		04C4AC301C0A0C1C00C0654C /* src */ = {
 			isa = PBXGroup;
 			children = (
+				043F81A11C0E9FBA000B8EB0 /* assembler */,
 				049707B01C0D2B890000AC9F /* common */,
 				049707AD1C0D22320000AC9F /* x86 */,
 				04BCDA551C0C91F400A113DD /* ui */,
@@ -183,13 +211,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				043F81B51C0EA2C0000B8EB0 /* assembler.cpp in Sources */,
 				049707B31C0D2B890000AC9F /* format.cc in Sources */,
 				04C4AC321C0A0C2800C0654C /* main.cpp in Sources */,
 				049707BD1C0D32F20000AC9F /* memory.cpp in Sources */,
 				049707B61C0D32300000AC9F /* instructions.cpp in Sources */,
+				043F81AF1C0E9FBA000B8EB0 /* x86parser.cpp in Sources */,
 				04FD00301C0DED81002E7F11 /* opcodes.cpp in Sources */,
 				049707B91C0D32E90000AC9F /* cpu.cpp in Sources */,
 				04BCDA581C0C91F400A113DD /* ui.cpp in Sources */,
+				043F81B21C0EA1F6000B8EB0 /* x86lexer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +303,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
+					/usr/local/opt/flex/include/,
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../src",
@@ -282,6 +314,7 @@
 					"-L/usr/local/Cellar/fltk/1.3.3/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "-Wno-deprecated-register";
 			};
 			name = Debug;
 		};
@@ -289,6 +322,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
+					/usr/local/opt/flex/include/,
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../src",
@@ -299,6 +333,7 @@
 					"-L/usr/local/Cellar/fltk/1.3.3/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "-Wno-deprecated-register";
 			};
 			name = Release;
 		};
