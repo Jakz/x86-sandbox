@@ -5,6 +5,7 @@
 #include "x86/registers.h"
 
 #include <Fl/Fl_Text_Editor.H>
+#include <Fl/Fl_Button.h>
 
 using namespace ui;
 using namespace std;
@@ -52,6 +53,12 @@ public:
   }
 };
 
+void cbStepButton(Fl_Widget* w, void* data)
+{
+  ((Fl_Button*)w)->set();
+  printf("Antanius\n");
+}
+
 MainWindow::MainWindow(const Machine& machine) : Fl_Double_Window(1280, 800, "X86 Sandbox"), machine(machine)
 {
   Fl::set_font(FL_HELVETICA, "Consolas");
@@ -65,6 +72,11 @@ MainWindow::MainWindow(const Machine& machine) : Fl_Double_Window(1280, 800, "X8
   regs[1]->updateValue(0);
   regs[2]->updateValue(0);
   regs[3]->updateValue(0);
+  
+  stepButton = new Fl_Button(20, 250, 100, 20, "Step");
+  stepButton->when(FL_WHEN_RELEASE_ALWAYS);
+  stepButton->type(FL_NORMAL_BUTTON);
+  stepButton->callback(cbStepButton, this);
 
 
 }

@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
    mov dx, 5678h
    mov ebx, 80808080h
    */
-  size_t index = 0;
+  /*size_t index = 0;
   for (int mod = 0; mod < 3; ++mod)
   {
     for (int reg = 0; reg < 8; ++reg)
@@ -76,7 +76,7 @@ int main(int argc, const char * argv[])
         }
       }
     }
-  }
+  }*/
   
   
   //std::vector<u8> code = {0x66,0x67,0x8b,0x80,0x78,0x56};
@@ -93,13 +93,14 @@ int main(int argc, const char * argv[])
   assembler.printCode();
   assembler.save("/Users/Jack/Documents/Dev/asm/foo");*/
   
+  ui::init(machine);
   
-  auto i = decoder.decode(machine);
+  /*auto i = decoder.decode(machine);
   while (i) {
     //i->execute(machine);
     printf("Executed %02x %s\n",memory->get<u8>(i->getStartingAddress()+3), i->mnemonic().c_str());
     i = decoder.decode(machine);
-  }
+  }*/
   
   return 0;
 }

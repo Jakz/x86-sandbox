@@ -7,6 +7,7 @@
 
 class Machine;
 
+class Fl_Button;
 
 namespace ui
 {
@@ -20,6 +21,8 @@ namespace ui
   private:
     const Machine& machine;
     RegisterGPWidget* regs[4];
+    
+    Fl_Button* stepButton;
     
     
   public:
