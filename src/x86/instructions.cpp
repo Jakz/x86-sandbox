@@ -20,10 +20,13 @@ public:
 class RMInstructionBase : public Instruction
 {
 protected:
+  SIBByte sibByte;
   using Instruction::Instruction;
 public:
   virtual size_t fetchDisplacement(Machine& machine) = 0;
   virtual bool hasSibByte() const = 0;
+  
+  void setSIBByte(SIBByte byte) { this->sibByte = byte; }
 };
 
 template<typename Reg, typename Addr>
@@ -67,7 +70,7 @@ public:
   std::string mnemonic() override
   {
     std::string reg = modRm.mnemonicReg();
-    std::string rm = modRm.mnemonicRM();
+    std::string rm = hasSibByte() ? sibByte.mnemonic() : modRm.mnemonicRM();
     
     if (modRm.displacementLength() > 0)
       rm = fmt::sprintf("[%s + %xh]", rm.c_str(), displacement);
@@ -152,12 +155,12 @@ public:
   
   void execute(Machine& machine) override
   {
-    if (!this->hasSibByte())
-    {
-      Reg& source = this->sourceIsReg ? this->modRm.getReg(machine) : this->modRm.getRMValue(machine, this->displacement);
-      Reg& dest = this->sourceIsReg ? this->modRm.getRMValue(machine, this->displacement) : this->modRm.getReg(machine);
-      dest = source;
-    }
+    Reg& rm = this->hasSibByte() ? this->modRm.getRMValue(machine, this->displacement) : this->sibByte.template getMValue<Reg>(machine, this->displacement);
+    Reg& reg = this->modRm.getReg(machine);
+    
+    Reg& source = this->sourceIsReg ? reg : rm;
+    Reg& dest = this->sourceIsReg ? rm : reg;
+    dest = source;
   }
 };
 
@@ -238,9 +241,10 @@ std::unique_ptr<Instruction> Decoder::decode(Machine& machine)
         ii = operandMode == Mode::BITS16 ? (RMInstructionBase*)new MovRegRM<reg16, reg16>(opcode,rmByte) : new MovRegRM<reg32, reg16>(opcode,rmByte);
       else if (addressMode == Mode::BITS32)
       {
-        bool hasSib = ii->hasSibByte();
-        
         ii = operandMode == Mode::BITS16 ? (RMInstructionBase*)new MovRegRM<reg16, reg32>(opcode,rmByte) : new MovRegRM<reg32, reg32>(opcode,rmByte);
+        
+        if (ii->hasSibByte())
+          ii->setSIBByte(cpu->fetch<u8>());
       }
     }
 

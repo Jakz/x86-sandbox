@@ -37,7 +37,7 @@ int main(int argc, const char * argv[])
    mov ebx, 80808080h
    */
   size_t index = 0;
-  for (int mod = 0; mod < 4; ++mod)
+  for (int mod = 0; mod < 3; ++mod)
   {
     for (int reg = 0; reg < 8; ++reg)
     {
@@ -47,6 +47,22 @@ int main(int argc, const char * argv[])
         std::vector<u8> code = { 0x66, 0x67, 0x8b, rmbyte };
         memory->copy(index, code);
         index += code.size();
+        
+        if (rm == OP_RM_SIB_ENABLE)
+        {
+          for (int j = 0; j < 256; ++j)
+          {
+            memory->get<u8>(index) = j;
+            ++index;
+            
+            if (j < 256-1)
+            {
+              memory->copy(index, code);
+              index += code.size();
+            }
+          }
+        }
+        
         
         if (mod == 0b01)
         {

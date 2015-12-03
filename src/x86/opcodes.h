@@ -70,8 +70,11 @@ private:
   };
 
 public:
+  SIBByte() = default;
   SIBByte(u8 value) : value(value) { }
   SIBByte(RegIndex base, RegIndex index, Scale scale) : base(base), index(index), scale(scale) { }
+  
+  template<typename Reg> Reg& getMValue(Machine& machine, u32 displacement);
   
   u32 compute(Registers& regs)
   {

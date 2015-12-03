@@ -13,6 +13,17 @@ static const char* rm16[] = {
   "BX"
 };
 
+template<typename Reg> Reg& SIBByte::getMValue(Machine& machine, u32 displacement)
+{
+  // manage segment override and wrap of displacement
+  return machine.mem->get<Reg>(compute(machine.cpu->regs()) + displacement);
+}
+
+template reg8& SIBByte::getMValue<reg8>(Machine &machine, u32 displacement);
+template reg16& SIBByte::getMValue<reg16>(Machine &machine, u32 displacement);
+template reg32& SIBByte::getMValue<reg32>(Machine &machine, u32 displacement);
+
+
 template<typename Reg, typename Addr>
 size_t ModRMByte<Reg,Addr>::displacementLength() const
 {
