@@ -17,21 +17,27 @@ public:
   std::string mnemonic() override { return name; }
 };
 
+class RMInstructionBase : public Instruction
+{
+protected:
+  using Instruction::Instruction;
+public:
+  virtual size_t fetchDisplacement(Machine& machine) = 0;
+  virtual bool hasSibByte() const = 0;
+};
+
 template<typename Reg, typename Addr>
-class RMInstruction : public Instruction
+class RMInstruction : public RMInstructionBase
 {
 protected:
   ModRMByte<Reg,Addr> modRm;
   Addr displacement;
   bool sourceIsReg;
   std::string name;
-  RMInstruction(size_t length, const std::string& name, u8 opcode, u8 rmByte) : Instruction(length), name(name), modRm(rmByte), sourceIsReg(!(opcode & OP_DIRECTION_BIT))
+  RMInstruction(size_t length, const std::string& name, u8 opcode, u8 rmByte) : RMInstructionBase(length), name(name), modRm(rmByte), sourceIsReg(!(opcode & OP_DIRECTION_BIT))
   {
     increaseLength(modRm.displacementLength());
   }
-  
-public:
-  size_t getDisplacement() const { return modRm.displacementLength(); }
   
   template<typename T>
   void setDisplacement(T d)
@@ -39,13 +45,34 @@ public:
     displacement = static_cast<Addr>(static_cast<typename make_signed<Addr>::type>(static_cast<typename make_signed<T>::type>(d)));
   }
   
+public:
+  bool hasSibByte() const override { return modRm.hasSibByte(); }
+  
+  size_t fetchDisplacement(Machine& machine) override
+  {
+    size_t length = modRm.displacementLength();
+    
+    switch (length)
+    {
+      case 0: displacement = 0; break;
+      case 1: setDisplacement(machine.cpu->fetch<u8>()); break;
+      case 2: setDisplacement(machine.cpu->fetch<u16>()); break;
+      case 4: setDisplacement(machine.cpu->fetch<u32>()); break;
+
+    }
+
+    return length;
+  }
+  
   std::string mnemonic() override
   {
     std::string reg = modRm.mnemonicReg();
     std::string rm = modRm.mnemonicRM();
     
-    if (getDisplacement() > 0)
-      rm = fmt::sprintf("[%s + %x]", rm.c_str(), displacement);
+    if (modRm.displacementLength() > 0)
+      rm = fmt::sprintf("[%s + %xh]", rm.c_str(), displacement);
+    else if (modRm.isDirect())
+      rm = fmt::sprintf("%s", rm.c_str());
     else
       rm = fmt::sprintf("[%s]", rm.c_str());
     
@@ -125,9 +152,12 @@ public:
   
   void execute(Machine& machine) override
   {
-    Reg& source = this->sourceIsReg ? this->modRm.getReg(machine) : this->modRm.getRMValue(machine, this->displacement);
-    Reg& dest = this->sourceIsReg ? this->modRm.getRMValue(machine, this->displacement) : this->modRm.getReg(machine);
-    dest = source;
+    if (!this->hasSibByte())
+    {
+      Reg& source = this->sourceIsReg ? this->modRm.getReg(machine) : this->modRm.getRMValue(machine, this->displacement);
+      Reg& dest = this->sourceIsReg ? this->modRm.getRMValue(machine, this->displacement) : this->modRm.getReg(machine);
+      dest = source;
+    }
   }
 };
 
@@ -141,84 +171,90 @@ public:
 std::unique_ptr<Instruction> Decoder::decode(Machine& machine)
 {
   CPU* cpu = machine.cpu;
-  Mode mode = cpu->getMode();
+  Mode operandMode = cpu->getMode(), addressMode = cpu->getMode();
+  
+  u32 startAddress = cpu->regs().eip();
   
   u8 opcode = cpu->fetch<u8>();
+  
+  Instruction* i = nullptr;
   
   // operand size prefix
   if (opcode == OP_PREFIX_OPERAND)
   {
-    mode = mode == Mode::BITS16 ? Mode::BITS32 : Mode::BITS16;
+    operandMode = operandMode == Mode::BITS16 ? Mode::BITS32 : Mode::BITS16;
+    opcode = cpu->fetch<u8>();
+  }
+  
+  if (opcode == OP_PREFIX_ADDRESS)
+  {
+    addressMode = addressMode == Mode::BITS16 ? Mode::BITS32 : Mode::BITS16;
     opcode = cpu->fetch<u8>();
   }
 
+  
+  
+  
+  
   // mov r8, imm8
-  if ((opcode & ~0x07) == OP_MOV_IMM8)
+  if ((opcode & ~OP_REG_MASK) == OP_MOV_IMM8)
   {
     u8 imm = machine.cpu->fetch<u8>();
-    return make_unique<MovImmediateR<reg8>>(machine, opcode, imm);
+    i = new MovImmediateR<reg8>(machine, opcode, imm);
   }
   // mov r16/32, imm16/32
-  else if ((opcode & ~0x07) == OP_MOV_IMM1632)
+  else if ((opcode & ~OP_REG_MASK) == OP_MOV_IMM1632)
   {
-    if (mode == Mode::BITS16)
+    if (operandMode == Mode::BITS16)
     {
       u16 imm = machine.cpu->fetch<u16>();
-      return make_unique<MovImmediateR<reg16>>(machine, opcode, imm);
+      i = new MovImmediateR<reg16>(machine, opcode, imm);
     }
     else
     {
       u32 imm = machine.cpu->fetch<u32>();
-      return make_unique<MovImmediateR<reg32>>(machine, opcode, imm);
+      i = new MovImmediateR<reg32>(machine, opcode, imm);
     }
   }
   // mov r8/16/32, rm8/16/32
   // mov rm8/16/32, r8/16/32
-  else if ((opcode & ~0x03) == OP_MOV_REG_RM)
+  else if ((opcode & ~OP_RM_MASK) == OP_MOV_REG_RM)
   {
     bool is8bit = !(opcode & OP_WIDTH_BIT);
+    u8 rmByte = cpu->fetch<u8>();
     
+    RMInstructionBase* ii = nullptr;
+
     if (is8bit)
     {
-      u8 rmByte = cpu->fetch<u8>();
-      
-      MovRegRM<reg8, reg16>* i = new MovRegRM<reg8, reg16>(opcode,rmByte);
-      
-      size_t displacement = i->getDisplacement();
-      
-      if (displacement == 1)
-      {
-        u8 d = cpu->fetch<u8>();
-        i->setDisplacement(d);
-      }
-      else if (displacement == 2)
-      {
-        u16 d = cpu->fetch<u16>();
-        i->setDisplacement(d);
-      }
-      else if (displacement == 4)
-      {
-        u32 d = cpu->fetch<u32>();
-        i->setDisplacement(d);
-      }
-
-      return unique_ptr<Instruction>(i);
+      if (addressMode == Mode::BITS16)
+        ii = new MovRegRM<reg8, reg16>(opcode,rmByte);
+      else
+        ii = new MovRegRM<reg8, reg32>(opcode, rmByte);
     }
-    
-    
+    else
+    {
+      if (addressMode == Mode::BITS16)
+        ii = operandMode == Mode::BITS16 ? (RMInstructionBase*)new MovRegRM<reg16, reg16>(opcode,rmByte) : new MovRegRM<reg32, reg16>(opcode,rmByte);
+      else if (addressMode == Mode::BITS32)
+      {
+        bool hasSib = ii->hasSibByte();
+        
+        ii = operandMode == Mode::BITS16 ? (RMInstructionBase*)new MovRegRM<reg16, reg32>(opcode,rmByte) : new MovRegRM<reg32, reg32>(opcode,rmByte);
+      }
+    }
+
+    ii->fetchDisplacement(machine);
+    i = ii;
   }
   
   // AAA
-  else if (opcode == OP_AAA)
-  {
-    return make_unique<AAA>();
-  }
+  else if (opcode == OP_AAA) { i = new AAA(); }
   // NOP
-  else if (opcode == OP_NOP)
-  {
-    return make_unique<NOP>();
-  }
+  else if (opcode == OP_NOP) { i = new NOP(); }
   
   
-  return nullptr;
+  if (i) i->setStartingAddress(startAddress);
+  
+  return unique_ptr<Instruction>(i);
 };

@@ -6,6 +6,7 @@
 
 enum class Mode
 {
+  BITS8,
   BITS16,
   BITS32,
   BITS64
@@ -22,7 +23,7 @@ private:
   Mode mode;
   
 public:
-  CPU(Memory* memory) : mem(memory), mode(Mode::BITS32) { }
+  CPU(Memory* memory) : mem(memory), mode(Mode::BITS16) { }
   
   Mode getMode() const { return mode; }
   

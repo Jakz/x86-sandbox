@@ -22,7 +22,28 @@ enum Opcodes : u8
 enum OpMods : u8
 {
   OP_WIDTH_BIT = 0x01,
-  OP_DIRECTION_BIT = 0x02
+  OP_DIRECTION_BIT = 0x02,
+  
+  OP_RM_MASK = OP_WIDTH_BIT | OP_DIRECTION_BIT,
+  
+  OP_REG_MASK = 0x07,
+  
+  OP_EXPLICIT_REG = 0b11,
+  OP_DISPLACEMENT_NONE = 0b00,
+  OP_DISPLACEMENT8 = 0b01,
+  OP_DISPLACEMENT1632 = 0b10,
+  
+  OP_RM_MOD_MASK = 0b11000000,
+  OP_RM_REG_MASK = 0b00111000,
+  OP_RM_RM_MASK = 0b00000111,
+  
+  OP_RM_MOD_SHIFT = 6,
+  OP_RM_REG_SHIFT = 3,
+  OP_RM_RM_SHIFT = 0,
+  
+  OP_RM_SIB_ENABLE = 0b100,
+  OP_RM_DISPLACEMENT_ONLY = 0b101
+  
 };
 
 class SIBByte
@@ -85,9 +106,14 @@ private:
 public:
   ModRMByte(u8 value) : value(value) { }
   
+  bool isDirect() const { return mod == OP_EXPLICIT_REG; }
   size_t displacementLength() const;
   std::string mnemonicRM();
   std::string mnemonicReg();
+  
+  template<typename U = Addr, typename std::enable_if<std::is_same<U, u32>::value, int>::type = 0> bool hasSibByte() const { return rm == OP_RM_SIB_ENABLE && mod != OP_EXPLICIT_REG; }
+  template<typename U = Addr, typename std::enable_if<!std::is_same<U, u32>::value, int>::type = 0> bool hasSibByte() const { return false; }
+
   
   Reg& getRMValue(Machine& machine, Addr displacement);
   Reg& getReg(Machine& machine);

@@ -67,6 +67,9 @@ void Assembler::printCode()
       first = false;
     }
   }
+  
+  if (code.size() % 8 != 0)
+    printf("\n");
 }
 
 void Assembler::assemble(const std::string& text)

@@ -59,14 +59,6 @@
 "&&" { return Parser::make_LAND(loc); }
 "||" { return Parser::make_LOR(loc); }
 
-"+=" { return Parser::make_ASSIGN_PLUS(loc); }
-"-=" { return Parser::make_ASSIGN_MINUS(loc); }
-"*=" { return Parser::make_ASSIGN_TIMES(loc); }
-"/=" { return Parser::make_ASSIGN_DIV(loc); }
-"%=" { return Parser::make_ASSIGN_MOD(loc); }
-"&&=" { return Parser::make_ASSIGN_LAND(loc); }
-"||=" { return Parser::make_ASSIGN_LOR(loc); }
-
 "<" { return Parser::make_LESS(loc); }
 "<=" { return Parser::make_LESSEQ(loc); }
 ">" { return Parser::make_GREATER(loc); }

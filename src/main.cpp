@@ -25,7 +25,7 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
-  Memory* memory = new Memory(1000);
+  Memory* memory = new Memory(100000);
   CPU* cpu = new CPU(memory);
   Machine machine = { memory, cpu };
   Decoder decoder;
@@ -36,30 +36,54 @@ int main(int argc, const char * argv[])
    mov dx, 5678h
    mov ebx, 80808080h
    */
-  std::vector<u8> code = {0xB8,0x34,0x12,0x00,0x00,0xB1,0x80,0x66,0xBA,0x78,0x56,0xBB,0x80,0x00,0x00,0x00};
-  memory->copy(0, code);
+  size_t index = 0;
+  for (int mod = 0; mod < 4; ++mod)
+  {
+    for (int reg = 0; reg < 8; ++reg)
+    {
+      for (int rm = 0; rm < 8; ++rm)
+      {
+        u8 rmbyte = (mod << 6) | (reg << 3) | rm;
+        std::vector<u8> code = { 0x66, 0x67, 0x8b, rmbyte };
+        memory->copy(index, code);
+        index += code.size();
+        
+        if (mod == 0b01)
+        {
+          memory->get<u8>(index) = 0x71;
+          ++index;
+        }
+        else if (mod == 0b10 || (mod == 0b00 && rm == 0b101))
+        {
+          memory->get<u32>(index) = 0x99AABBCC;
+          index += 4;
+        }
+      }
+    }
+  }
   
-  std::vector<u8> code2 = {0x88,0x37,0x88,0x57,0x01};
-  memory->copy(code.size(), code2);
   
-  assembler::Assembler assembler;
+  //std::vector<u8> code = {0x66,0x67,0x8b,0x80,0x78,0x56};
+  //memory->copy(0, code);
+
+  /*assembler::Assembler assembler;
   assembler.parseString(
                         "nop\n"
-                        "mov al, 0x800\n"
-                        "mov bh, 0xFF\n"
-                        "mov bx, 0x1234\n"
+                        "mov al, 0x80\n"
+                        "mov bh, -129\n"
+                        "mov bx, 0x12345\n"
                         "mov ebx, 0x12345678\n");
   
   assembler.printCode();
-  assembler.save("/Users/Jack/Documents/Dev/asm/foo");
+  assembler.save("/Users/Jack/Documents/Dev/asm/foo");*/
   
   
-  /*auto i = decoder.decode(machine);
+  auto i = decoder.decode(machine);
   while (i) {
-    i->execute(machine);
-    cout << "Executed " << i->mnemonic() << endl;
+    //i->execute(machine);
+    printf("Executed %02x %s\n",memory->get<u8>(i->getStartingAddress()+3), i->mnemonic().c_str());
     i = decoder.decode(machine);
-  }*/
+  }
   
   return 0;
 }

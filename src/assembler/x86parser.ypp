@@ -80,13 +80,6 @@
   QUESTION "?"
 
   ASSIGN "="
-  ASSIGN_PLUS "+="
-  ASSIGN_MINUS "-="
-  ASSIGN_TIMES "*="
-  ASSIGN_DIV "/="
-  ASSIGN_MOD "%="
-  ASSIGN_LAND "&&="
-  ASSIGN_LOR "||="
 
   LESS "<"
   LESSEQ "<="
@@ -203,7 +196,7 @@ instruction:
     assembler.emitValue<u8>($4);
 }
 | MOV reg16or32 COMMA U32 {
-    if ($2.mode == Mode::BITS16 && ($4 > 0xFFFF || $4 < (s32)0xFFFF))
+    if ($2.mode == Mode::BITS16 && $4 > (u32)0xFFFF)
       assembler.warning(@1, "word value exceed bounds");
       
     assembler.emitOperandPrefix($2.mode);
