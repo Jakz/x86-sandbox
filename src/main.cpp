@@ -93,7 +93,7 @@ int main(int argc, const char * argv[])
   assembler.printCode();
   assembler.save("/Users/Jack/Documents/Dev/asm/foo");*/
   
-  ui::init(machine);
+  //ui::init(machine);
   
   /*auto i = decoder.decode(machine);
   while (i) {
@@ -101,6 +101,8 @@ int main(int argc, const char * argv[])
     printf("Executed %02x %s\n",memory->get<u8>(i->getStartingAddress()+3), i->mnemonic().c_str());
     i = decoder.decode(machine);
   }*/
+  
+  printf("foobar");
   
   return 0;
 }
