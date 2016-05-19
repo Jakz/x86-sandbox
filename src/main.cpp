@@ -17,7 +17,8 @@
 
 #include "machine/memory.h"
 
-#include "ui/ui.h"
+//#include "ui/ui.h"
+#include "ui/terminal.h"
 
 #include "assembler/assembler.h"
 
@@ -102,7 +103,18 @@ int main(int argc, const char * argv[])
     i = decoder.decode(machine);
   }*/
   
-  printf("foobar");
+  term t;
+  t.init();
+  bool exit = false;
+  
+  do
+  {
+    t.draw();
+    t.handleEvents();
+    exit = t.shouldExit();
+  } while (!exit);
+  
+  t.shutdown();
   
   return 0;
 }

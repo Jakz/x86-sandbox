@@ -10,8 +10,9 @@
 		043F81AF1C0E9FBA000B8EB0 /* x86parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043F81A91C0E9FBA000B8EB0 /* x86parser.cpp */; };
 		043F81B21C0EA1F6000B8EB0 /* x86lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043F81B11C0EA1F6000B8EB0 /* x86lexer.cpp */; settings = {COMPILER_FLAGS = "-Wno-shorten-64-to-32"; }; };
 		043F81B51C0EA2C0000B8EB0 /* assembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043F81B31C0EA2C0000B8EB0 /* assembler.cpp */; };
+		0464DD941C165479003C0983 /* libncurses.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0464DD921C16530E003C0983 /* libncurses.dylib */; };
+		0464DD961C165687003C0983 /* libpanel.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0464DD951C165687003C0983 /* libpanel.dylib */; };
 		0495BA0D1C14FA6F00A8132C /* terminal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0495BA0B1C14FA6F00A8132C /* terminal.cpp */; };
-		0495BA0F1C14FAB900A8132C /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0495BA0E1C14FAB900A8132C /* libncurses.tbd */; };
 		049707B31C0D2B890000AC9F /* format.cc in Sources */ = {isa = PBXBuildFile; fileRef = 049707B11C0D2B890000AC9F /* format.cc */; };
 		049707B61C0D32300000AC9F /* instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 049707B41C0D32300000AC9F /* instructions.cpp */; };
 		049707B91C0D32E90000AC9F /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 049707B71C0D32E90000AC9F /* cpu.cpp */; };
@@ -42,6 +43,8 @@
 		043F81B11C0EA1F6000B8EB0 /* x86lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = x86lexer.cpp; sourceTree = "<group>"; };
 		043F81B31C0EA2C0000B8EB0 /* assembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = assembler.cpp; sourceTree = "<group>"; };
 		043F81B41C0EA2C0000B8EB0 /* assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = assembler.h; sourceTree = "<group>"; };
+		0464DD921C16530E003C0983 /* libncurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncurses.dylib; path = usr/lib/libncurses.dylib; sourceTree = SDKROOT; };
+		0464DD951C165687003C0983 /* libpanel.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpanel.dylib; path = usr/lib/libpanel.dylib; sourceTree = SDKROOT; };
 		0495BA0B1C14FA6F00A8132C /* terminal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = terminal.cpp; sourceTree = "<group>"; };
 		0495BA0C1C14FA6F00A8132C /* terminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = terminal.h; sourceTree = "<group>"; };
 		0495BA0E1C14FAB900A8132C /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
@@ -68,7 +71,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0495BA0F1C14FAB900A8132C /* libncurses.tbd in Frameworks */,
+				0464DD961C165687003C0983 /* libpanel.dylib in Frameworks */,
+				0464DD941C165479003C0983 /* libncurses.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +159,8 @@
 		04EA14411C08C2C700BA9B7B = {
 			isa = PBXGroup;
 			children = (
+				0464DD951C165687003C0983 /* libpanel.dylib */,
+				0464DD921C16530E003C0983 /* libncurses.dylib */,
 				0495BA0E1C14FAB900A8132C /* libncurses.tbd */,
 				04C4AC301C0A0C1C00C0654C /* src */,
 				04EA144B1C08C2C700BA9B7B /* Products */,
